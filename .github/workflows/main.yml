@@ -1,0 +1,27 @@
+name: main
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # every hour
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+  
+jobs:
+  newjob:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        continue-on-error: true
+        uses: actions/checkout@v4
+      - name: run container
+        continue-on-error: true
+        run: |
+          sudo docker run --rm \
+            --cap-add=NET_ADMIN \
+            --device=/dev/net/tun \
+            marosoo9/aug    
